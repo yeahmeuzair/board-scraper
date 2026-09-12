@@ -1,3 +1,4 @@
+import io
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -153,12 +154,15 @@ print(f"\nTotal Notifications Scraped: {len(all_notifications)}")
 
 try:
     host = os.environ.get('FTP_HOST')
-    port = 2222 # PANTHEON USES PORT 2222
+    port = 2222
     username = os.environ.get('FTP_USER')
-    password = os.environ.get('FTP_PASS')
+    private_key_str = os.environ.get('SSH_PRIVATE_KEY')
+    
+    # Load the private key
+    key = paramiko.RSAKey.from_private_key(io.StringIO(private_key_str))
     
     transport = paramiko.Transport((host, port))
-    transport.connect(username=username, password=password)
+    transport.connect(username=username, pkey=key)
     sftp = paramiko.SFTPClient.from_transport(transport)
     
     sftp.chdir('files') 
@@ -166,6 +170,6 @@ try:
     
     sftp.close()
     transport.close()
-    print("🚀 SUCCESS: JSON uploaded to WordPress via SFTP!")
+    print("🚀 SUCCESS: JSON uploaded to WordPress via SFTP with SSH Key!")
 except Exception as e:
     print(f"⚠️ SFTP Upload Failed: {e}")
