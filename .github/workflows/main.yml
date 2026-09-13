@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs at 3:00 AM UTC (8:00 AM PKT) every day
     - cron: '0 3 * * *'
-  workflow_dispatch: # This allows you to run it manually by clicking a button
+  workflow_dispatch: # Allows you to run it manually by clicking a button
 
 jobs:
   scrape-and-upload:
@@ -20,12 +20,17 @@ jobs:
           python-version: '3.10'
 
       - name: Install Libraries
-        run: |
-          pip install requests beautifulsoup4 paramiko
+        run: pip install requests beautifulsoup4
 
       - name: Run Scraper
-        env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          FTP_USER: ${{ secrets.FTP_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        # Your python script should save the file into a folder named "output"
         run: python scraper.py
+
+      - name: Upload JSON to Middlehost via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./output/
+          server-dir: ./
