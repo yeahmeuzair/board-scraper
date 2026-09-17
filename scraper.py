@@ -1,10 +1,8 @@
-import io
 import requests
 from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 import os
-import paramiko # THIS IS THE NEW SECURE UPLOAD LIBRARY!
 
 all_notifications = []
 
@@ -146,43 +144,15 @@ try: scrape_peshawar(); print("✅ Peshawar Scraped")
 except Exception as e: print("❌ Peshawar Failed:", e)
 
 # ==========================================
-# UZAIR
+# SAVE JSON TO OUTPUT FOLDER
 # ==========================================
 
-import os
-
-# Create the folder if it doesn't exist
+# 1. Create the output folder if it doesn't exist
 os.makedirs('output', exist_ok=True)
 
-# Make sure you are saving the file INSIDE the folder like this:
-with open('output/notifications.json', 'w') as f:
-    # your save logic here...
-
-# ==========================================
-# SAVE & SECURE SFTP UPLOAD TO PANTHEON
-# ==========================================
-with open('notifications-data.json', 'w', encoding='utf-8') as f:
+# 2. Save the file inside the output folder
+with open('output/notifications-data.json', 'w', encoding='utf-8') as f:
     json.dump(all_notifications, f, ensure_ascii=False, indent=4)
-print(f"\nTotal Notifications Scraped: {len(all_notifications)}")
-
-try:
-    host = os.environ.get('FTP_HOST')
-    port = 2222
-    username = os.environ.get('FTP_USER')
-    private_key_str = os.environ.get('SSH_PRIVATE_KEY')
     
-    # Load the private key
-    key = paramiko.RSAKey.from_private_key(io.StringIO(private_key_str))
-    
-    transport = paramiko.Transport((host, port))
-    transport.connect(username=username, pkey=key)
-    sftp = paramiko.SFTPClient.from_transport(transport)
-    
-    sftp.chdir('files') 
-    sftp.put('notifications-data.json', 'notifications-data.json')
-    
-    sftp.close()
-    transport.close()
-    print("🚀 SUCCESS: JSON uploaded to WordPress via SFTP with SSH Key!")
-except Exception as e:
-    print(f"⚠️ SFTP Upload Failed: {e}")
+print(f"\n✅ Total Notifications Scraped: {len(all_notifications)}")
+print("✅ Saved to output/notifications-data.json ready for FTP deployment.")
