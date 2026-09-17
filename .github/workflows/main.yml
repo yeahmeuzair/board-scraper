@@ -20,7 +20,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install Libraries
-        run: pip install requests beautifulsoup4
+        run: pip install requests beautifulsoup4 paramiko
 
       - name: Run Scraper
         # Your python script should save the file into a folder named "output"
