@@ -146,6 +146,19 @@ try: scrape_peshawar(); print("✅ Peshawar Scraped")
 except Exception as e: print("❌ Peshawar Failed:", e)
 
 # ==========================================
+# UZAIR
+# ==========================================
+
+import os
+
+# Create the folder if it doesn't exist
+os.makedirs('output', exist_ok=True)
+
+# Make sure you are saving the file INSIDE the folder like this:
+with open('output/notifications.json', 'w') as f:
+    # your save logic here...
+
+# ==========================================
 # SAVE & SECURE SFTP UPLOAD TO PANTHEON
 # ==========================================
 with open('notifications-data.json', 'w', encoding='utf-8') as f:
